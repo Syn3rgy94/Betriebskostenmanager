@@ -1,0 +1,13 @@
+services:
+  betriebskosten-manager:
+    build: .
+    container_name: betriebskosten-manager
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      # Speichert die Datenbankdatei permanent auf Ihrem Heimserver
+      - ./data:/app/data
+    environment:
+      - PORT=3000
+      - NODE_ENV=production

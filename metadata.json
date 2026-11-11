@@ -1,0 +1,6 @@
+{
+  "name": "BetriebskostenManager Pro (BetrKV)",
+  "description": "Lokale Webanwendung zur rechtssicheren Erfassung aller Betriebskosten nach BetrKV, Mehrjahres-Kostenverlauf und DIN-5008-konformen PDF-Mieterabrechnungen.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
