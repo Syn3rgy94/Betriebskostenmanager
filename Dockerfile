@@ -1,17 +1,17 @@
-FROM node:22-alpine AS builder
+FROM node:22-slim AS builder
 
 WORKDIR /app
 
-# Install dependencies (supports builds with and without package-lock.json)
+# Install dependencies (using debian-slim with glibc to prevent musl binding errors with vite/rolldown)
 COPY package*.json tsconfig.json ./
-RUN if [ -f package-lock.json ]; then npm ci --legacy-peer-deps; else npm install --legacy-peer-deps; fi
+RUN npm install --legacy-peer-deps
 
 # Copy application source and build frontend
 COPY . .
 RUN npm run build
 
 # Production runtime stage
-FROM node:22-alpine AS runner
+FROM node:22-slim AS runner
 
 WORKDIR /app
 ENV NODE_ENV=production
@@ -19,8 +19,7 @@ ENV PORT=3000
 
 # Install production dependencies & tsx runtime
 COPY package*.json ./
-RUN if [ -f package-lock.json ]; then npm ci --omit=dev --legacy-peer-deps; else npm install --omit=dev --legacy-peer-deps; fi \
-    && npm install -g tsx
+RUN npm install --omit=dev --legacy-peer-deps && npm install -g tsx
 
 # Copy built frontend & server code
 COPY --from=builder /app/dist ./dist
