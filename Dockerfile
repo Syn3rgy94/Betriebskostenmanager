@@ -2,9 +2,9 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Install dependencies
+# Install dependencies (supports builds with and without package-lock.json)
 COPY package*.json tsconfig.json ./
-RUN npm ci
+RUN if [ -f package-lock.json ]; then npm ci --legacy-peer-deps; else npm install --legacy-peer-deps; fi
 
 # Copy application source and build frontend
 COPY . .
@@ -19,7 +19,8 @@ ENV PORT=3000
 
 # Install production dependencies & tsx runtime
 COPY package*.json ./
-RUN npm ci --omit=dev && npm install -g tsx
+RUN if [ -f package-lock.json ]; then npm ci --omit=dev --legacy-peer-deps; else npm install --omit=dev --legacy-peer-deps; fi \
+    && npm install -g tsx
 
 # Copy built frontend & server code
 COPY --from=builder /app/dist ./dist
